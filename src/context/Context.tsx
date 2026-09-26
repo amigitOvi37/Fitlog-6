@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useState, useEffect } from "react";
 import { IExercise } from "@/types/Type";
 import { PlannedExercise, SavedExercise } from "@/types/Type";
 
@@ -45,11 +45,46 @@ const AllContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [workouts, setWorkouts] = useState<IExercise[]>([]);
 
-  const [todaysPlans, setTodaysPlans] =
-    useState<PlannedExercise[]>([]);
+  const [todaysPlans, setTodaysPlans] = useState<PlannedExercise[]>([]);
+  const [savedWorkouts, setSavedWorkouts] = useState<SavedExercise[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const [savedWorkouts, setSavedWorkouts] =
-    useState<SavedExercise[]>([]);
+  useEffect(() => {
+    const storedPlans = localStorage.getItem("todaysPlans");
+    const storedSaved = localStorage.getItem("savedWorkouts");
+
+    if (storedPlans) {
+      try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: hydrate from localStorage after initial render
+        setTodaysPlans(JSON.parse(storedPlans));
+      } catch {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: hydrate from localStorage after initial render
+        setTodaysPlans([]);
+      }
+    }
+    if (storedSaved) {
+      try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: hydrate from localStorage after initial render
+        setSavedWorkouts(JSON.parse(storedSaved));
+      } catch {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: hydrate from localStorage after initial render
+        setSavedWorkouts([]);
+      }
+    }
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem("todaysPlans", JSON.stringify(todaysPlans));
+    }
+  }, [todaysPlans, isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem("savedWorkouts", JSON.stringify(savedWorkouts));
+    }
+  }, [savedWorkouts, isHydrated]);
 
   const sharedData = {
     activeTab,

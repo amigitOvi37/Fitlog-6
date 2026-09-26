@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 const getWorkouts = async (): Promise<IExercise[]> => {
   try {
-    const response = await fetch("https://api.abcz.workers.dev/api/fitlog");
+    const response = await fetch("https://api.api-store.workers.dev/api/fitlog");
     const data = await response.json();
     return data;
   } catch (error) {
@@ -56,7 +56,11 @@ export default function WorkoutDetailsPage() {
 const WorkoutDetails = ({ workout }: { workout: IExercise }) => {
   const { todaysPlans, setTodaysPlans, savedWorkouts, setSavedWorkouts } = useContext(AllContext);
 
+  const sameWorkoutCount = todaysPlans.filter((p) => p.id === workout.id).length;
+  const isMaxReached = sameWorkoutCount >= 5;
+
   const handleAddToPlan = () => {
+    if (isMaxReached) return;
     setTodaysPlans([...todaysPlans, { ...workout, planId: `${workout.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }]);
     toast.success(`${workout.name} added to today's plan!`, {
       duration: 3000,
@@ -64,7 +68,7 @@ const WorkoutDetails = ({ workout }: { workout: IExercise }) => {
       style: {
         background: "#1f2937",
         color: "#fff",
-        border: "1px solid #374157",
+        border: "1px solid #374151",
       },
     });
   };
@@ -221,7 +225,12 @@ const WorkoutDetails = ({ workout }: { workout: IExercise }) => {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={handleAddToPlan}
-                className="flex-1 bg-[#C6FF00] hover:bg-[#b0e600] text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 cursor-pointer"
+                disabled={isMaxReached}
+                className={`flex-1 font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 ${
+                  isMaxReached
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-[#C6FF00] hover:bg-[#b0e600] text-black cursor-pointer"
+                }`}
               >
                 <svg
                   className="w-5 h-5"
@@ -236,7 +245,7 @@ const WorkoutDetails = ({ workout }: { workout: IExercise }) => {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Add to today's plan
+                {isMaxReached ? "Max reached (5)" : "Add to today's plan"}
               </button>
 
               <button
