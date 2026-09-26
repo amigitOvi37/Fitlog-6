@@ -15,7 +15,7 @@ const Hero = () => {
           <div className="w-full md:w-3/5 z-10 flex flex-col items-start text-left">
             {}
             <span className="text-[#a3eb00] text-xs sm:text-sm font-bold tracking-widest uppercase mb-4 sm:mb-6">
-              WORKOUT LIBRAR
+              WORKOUT LIBRARY
             </span>
 
             {}
