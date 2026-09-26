@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { IExercise } from "@/types/Type";
 import { AllContext } from "@/context/Context";
+import toast from "react-hot-toast";
 
 const getWorkouts = async (): Promise<IExercise[]> => {
   try {
@@ -57,10 +58,28 @@ const WorkoutDetails = ({ workout }: { workout: IExercise }) => {
 
   const handleAddToPlan = () => {
     setTodaysPlans([...todaysPlans, { ...workout, planId: `${workout.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }]);
+    toast.success(`${workout.name} added to today's plan!`, {
+      duration: 3000,
+      position: "top-center",
+      style: {
+        background: "#1f2937",
+        color: "#fff",
+        border: "1px solid #374157",
+      },
+    });
   };
 
   const handleSaveForLater = () => {
     setSavedWorkouts([...savedWorkouts, { ...workout, savedId: `${workout.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }]);
+    toast.success(`${workout.name} saved!`, {
+      duration: 3000,
+      position: "top-center",
+      style: {
+        background: "#1f2937",
+        color: "#fff",
+        border: "1px solid #374151",
+      },
+    });
   };
   return (
     <div className="bg-[#0B0F17]">
